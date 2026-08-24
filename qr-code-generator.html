@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR Code Generator — Sonic Elimited</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{
+    --bg:#0b0b0f; --bg-raised:#131318; --fg:#f2f0ea; --fg-dim:#9a98a3;
+    --accent:#00e5c0; --border:#232329;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{
+    background:var(--bg); color:var(--fg); font-family:'Space Grotesk',sans-serif;
+    min-height:100vh; display:flex; justify-content:center; padding:48px 20px;
+  }
+  .card{
+    width:100%; max-width:420px; background:var(--bg-raised);
+    border:1px solid var(--border); border-radius:18px; padding:32px;
+    display:flex; flex-direction:column; align-items:center; gap:18px;
+  }
+  h1{ font-size:20px; font-weight:700; text-align:center; }
+  p.sub{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--fg-dim);
+    text-align:center; letter-spacing:.5px; margin-top:-8px;
+  }
+  input{
+    width:100%; padding:14px 16px; background:#0e0e13; border:1px solid var(--border);
+    border-radius:10px; color:var(--fg); font-family:'IBM Plex Mono',monospace; font-size:13px;
+  }
+  input:focus{ outline:none; border-color:var(--accent); }
+  button{
+    width:100%; padding:14px; background:var(--accent); color:#03110d; border:none;
+    border-radius:10px; font-weight:700; font-size:14px; cursor:pointer;
+    font-family:'Space Grotesk',sans-serif;
+  }
+  button:hover{ opacity:.9; }
+  #qrbox{
+    background:#fff; padding:16px; border-radius:12px; display:none;
+  }
+  #downloadBtn{ display:none; background:transparent; color:var(--accent); border:1px solid var(--accent); }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Generate your packaging QR code</h1>
+    <p class="sub">PASTE YOUR LIVE LINKS PAGE URL BELOW</p>
+    <input id="urlInput" type="text" placeholder="https://sonicelimited.example.com" />
+    <button id="genBtn">Generate QR Code</button>
+    <div id="qrbox"></div>
+    <button id="downloadBtn">Download PNG</button>
+  </div>
+
+<script>
+  const genBtn = document.getElementById('genBtn');
+  const qrbox = document.getElementById('qrbox');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const urlInput = document.getElementById('urlInput');
+  let qr;
+
+  genBtn.addEventListener('click', () => {
+    const url = urlInput.value.trim();
+    if(!url) return;
+    qrbox.innerHTML = '';
+    qrbox.style.display = 'flex';
+    downloadBtn.style.display = 'block';
+    qr = new QRCode(qrbox, {
+      text: url,
+      width: 260,
+      height: 260,
+      colorDark: "#0b0b0f",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  });
+
+  downloadBtn.addEventListener('click', () => {
+    const img = qrbox.querySelector('img') || qrbox.querySelector('canvas');
+    const link = document.createElement('a');
+    link.download = 'sonicelimited-qr.png';
+    if(img.tagName === 'CANVAS'){
+      link.href = img.toDataURL('image/png');
+    } else {
+      link.href = img.src;
+    }
+    link.click();
+  });
+</script>
+</body>
+</html>
